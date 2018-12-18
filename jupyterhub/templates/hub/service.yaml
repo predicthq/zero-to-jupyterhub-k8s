@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: hub
+  name: jupyterhub-hub
 spec:
   type: {{ .Values.hub.service.type }}
   {{ if .Values.hub.service.loadBalancerIP -}}
   loadBalancerIP: {{ .Values.hub.service.loadBalancerIP }}
   {{- end }}
   selector:
-    name: hub
+    name: jupyterhub-hub
   ports:
     - protocol: TCP
       port: 8081

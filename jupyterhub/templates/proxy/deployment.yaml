@@ -3,10 +3,10 @@ kind: Deployment
 metadata:
   labels:
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    component: proxy
+    component: jupyterhub-proxy
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
-  name: proxy
+  name: {{ template "fullname" . }}-proxy
 spec:
   replicas: 1
   strategy:
@@ -19,12 +19,11 @@ spec:
     metadata:
       annotations:
         # This lets us autorestart when the secret changes!
-        checksum/hub-secret: {{ include (print $.Template.BasePath "/hub/secret.yaml") . | sha256sum }}
         checksum/proxy-secret: {{ include (print $.Template.BasePath "/proxy/secret.yaml") . | sha256sum }}
         hub.jupyter.org/https-type: {{ .Values.proxy.https.type }}
       labels:
-        name: proxy
-        component: proxy
+        name: jupyterhub-proxy
+        component: jupyterhub-proxy
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
         {{- if eq .Values.proxy.https.type "letsencrypt" }}
@@ -46,7 +45,7 @@ spec:
                   matchExpressions:
                     - key: component
                       operator: In
-                      values: ['hub']
+                      values: ['jupyterhub']
                     - key: release
                       operator: In
                       values: [ {{ .Release.Name | quote }} ]
@@ -58,7 +57,7 @@ spec:
 {{ toYaml .Values.proxy.nginx.resources | indent 12 }}
           args:
             - /nginx-ingress-controller
-            - --default-backend-service={{ .Release.Namespace }}/proxy-http
+            - --default-backend-service={{ .Release.Namespace }}/jupyterhub-proxy-http
             - --configmap={{ .Release.Namespace }}/nginx-proxy-config
             - --ingress-class=jupyterhub-proxy-tls
             - --watch-namespace={{ .Release.Namespace }}

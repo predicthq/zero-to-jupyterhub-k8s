@@ -15,7 +15,7 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: proxy-http
+              serviceName: jupyterhub-proxy-http
               servicePort: 8000
       host: {{ $host }}
     {{- end }}

@@ -14,7 +14,7 @@ AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 c.JupyterHub.spawner_class = 'kubespawner.KubeSpawner'
 
 # Connect to a proxy running in a different pod
-c.ConfigurableHTTPProxy.api_url = 'http://{}:{}'.format(os.environ['PROXY_API_SERVICE_HOST'], int(os.environ['PROXY_API_SERVICE_PORT']))
+c.ConfigurableHTTPProxy.api_url = 'http://{}:{}'.format(os.environ['JUPYTERHUB_PROXY_API_SERVICE_HOST'], int(os.environ['JUPYTERHUB_PROXY_API_SERVICE_PORT']))
 c.ConfigurableHTTPProxy.should_start = False
 
 # Do not shut down user pods when hub is restarted
@@ -32,8 +32,8 @@ active_server_limit = get_config('hub.active-server-limit', None)
 if active_server_limit is not None:
     c.JupyterHub.active_server_limit = int(active_server_limit)
 
-c.JupyterHub.ip = os.environ['PROXY_PUBLIC_SERVICE_HOST']
-c.JupyterHub.port = int(os.environ['PROXY_PUBLIC_SERVICE_PORT'])
+c.JupyterHub.ip = os.environ['JUPYTERHUB_PROXY_PUBLIC_SERVICE_HOST']
+c.JupyterHub.port = int(os.environ['JUPYTERHUB_PROXY_PUBLIC_SERVICE_PORT'])
 
 # the hub should listen on all interfaces, so the proxy can access it
 c.JupyterHub.hub_ip = '0.0.0.0'
@@ -108,11 +108,11 @@ if init_containers:
     c.KubeSpawner.singleuser_init_containers.extend(init_containers)
 
 # Gives spawned containers access to the API of the hub
-c.KubeSpawner.hub_connect_ip = os.environ['HUB_SERVICE_HOST']
-c.KubeSpawner.hub_connect_port = int(os.environ['HUB_SERVICE_PORT'])
+c.KubeSpawner.hub_connect_ip = os.environ['JUPYTERHUB_HUB_SERVICE_HOST']
+c.KubeSpawner.hub_connect_port = int(os.environ['JUPYTERHUB_HUB_SERVICE_PORT'])
 
-c.JupyterHub.hub_connect_ip = os.environ['HUB_SERVICE_HOST']
-c.JupyterHub.hub_connect_port = int(os.environ['HUB_SERVICE_PORT'])
+c.JupyterHub.hub_connect_ip = os.environ['JUPYTERHUB_HUB_SERVICE_HOST']
+c.JupyterHub.hub_connect_port = int(os.environ['JUPYTERHUB_HUB_SERVICE_PORT'])
 
 c.KubeSpawner.mem_limit = get_config('singleuser.memory.limit')
 c.KubeSpawner.mem_guarantee = get_config('singleuser.memory.guarantee')
@@ -243,7 +243,7 @@ for name, service in get_config('hub.services', {}).items():
     c.JupyterHub.services.append(service)
 
 
-c.JupyterHub.db_url = get_config('hub.db_url')
+c.JupyterHub.db_url = get_secret('hub.db_url')
 
 cmd = get_config('singleuser.cmd', None)
 if cmd:
