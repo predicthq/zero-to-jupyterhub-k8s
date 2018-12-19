@@ -154,6 +154,7 @@ singleuser:
     guarantee: 1G
   cmd: jupyterhub-singleuser
   defaultUrl:
+  imagePullSecret:
 
 prePuller:
   hook:

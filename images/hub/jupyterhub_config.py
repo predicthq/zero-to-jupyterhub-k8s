@@ -99,6 +99,10 @@ elif storage_type == 'static':
 c.KubeSpawner.volumes.extend(get_config('singleuser.storage.extra-volumes', []))
 c.KubeSpawner.volume_mounts.extend(get_config('singleuser.storage.extra-volume-mounts', []))
 
+image_pull_secret = get_config('singleuser.image-pull-secret')
+if image_pull_secret:
+    c.KubeSpawner.singleuser_image_pull_secrets = image_pull_secret
+
 lifecycle_hooks = get_config('singleuser.lifecycle-hooks')
 if lifecycle_hooks:
     c.KubeSpawner.singleuser_lifecycle_hooks = lifecycle_hooks

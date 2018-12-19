@@ -6,3 +6,8 @@ FROM jupyter/base-notebook:27ba57364579
 # set via --build-arg in Makefile
 ARG JUPYTERHUB_VERSION=0.8
 RUN pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION
+
+## Install R Kernel and SQL magic queries
+RUN conda install -c r r-irkernel
+RUN conda install -c r pyzmq
+RUN conda install -c conda-forge ipython-sql

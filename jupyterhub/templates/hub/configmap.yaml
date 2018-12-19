@@ -173,6 +173,9 @@ data:
     {{ $key | quote }}: {{ $value | quote }}
     {{ end }}
   {{- end }}
+  {{ if .Values.singleuser.imagePullSecret -}}
+    singleuser.image-pull-secret: {{ .Values.singleuser.imagePullSecret | quote }}
+  {{- end }}
   token.cookie_secret: {{ .Values.hub.cookieSecret | quote }}
   hub.base_url: {{ .Values.hub.baseUrl | quote }}
   {{ if eq .Values.hub.db.type "sqlite-pvc" -}}
