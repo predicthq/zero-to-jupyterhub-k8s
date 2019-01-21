@@ -58,7 +58,9 @@ c.KubeSpawner.singleuser_node_selector = get_config('singleuser.node-selector')
 # Configure dynamically provisioning pvc
 storage_type = get_config('singleuser.storage.type')
 if storage_type == 'dynamic':
-    c.KubeSpawner.pvc_name_template = 'claim-{username}{servername}'
+    volume_name_template = 'jupyterhub-volume-{username}{servername}'
+    claim_name_template = 'jupyterhub-claim-{username}{servername}'
+    c.KubeSpawner.pvc_name_template = claim_name_template
     c.KubeSpawner.user_storage_pvc_ensure = True
     storage_class = get_config('singleuser.storage.dynamic.storage-class', None)
     if storage_class:
@@ -69,16 +71,16 @@ if storage_type == 'dynamic':
     # Add volumes to singleuser pods
     c.KubeSpawner.volumes = [
         {
-            'name': 'volume-{username}{servername}',
+            'name': volume_name_template,
             'persistentVolumeClaim': {
-                'claimName': 'claim-{username}{servername}'
+                'claimName': claim_name_template
             }
         }
     ]
     c.KubeSpawner.volume_mounts = [
         {
             'mountPath': get_config('singleuser.storage.home_mount_path'),
-            'name': 'volume-{username}{servername}'
+            'name': volume_name_template
         }
     ]
 elif storage_type == 'static':
